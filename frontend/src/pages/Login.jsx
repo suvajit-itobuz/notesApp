@@ -1,12 +1,13 @@
-import React from "react";
 import react from "react";
+import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState ,useContext} from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-
-import { Navigate } from 'react-router-dom';
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 const ValidateLogin = z.object({
   email: z.string().email({ message: "Invalid email format" }),
@@ -23,7 +24,16 @@ const ValidateLogin = z.object({
 
 export const Login = () => {
 
-  // let statusMessage = null;
+  const navigate = useNavigate();
+  // const user = useContext(UserContext);
+  
+  const {isLogin,setIsLogin}=useContext(UserContext);
+
+
+  // setIsLoggin(true);
+  // console.log(isLoggin);
+  
+  
   const {
     register,
     handleSubmit,
@@ -32,45 +42,49 @@ export const Login = () => {
     resolver: zodResolver(ValidateLogin),
   });
 
+// submit button -----------------
   const onSubmit = async (data) => {
     try {
-
       const response = await axios.post(`http://localhost:8000/login`, data);
+      console.log(response);
+      const { token, refreshToken } = await response.data;
+
+      localStorage.setItem("accessToken", token);
+      localStorage.setItem("refreshToken", refreshToken);
+
       if (response.status === 201) {
-
-        <Navigate to="/Notes" />
-        setLoginStatus("success");
+        notify("success");
+        await navigate("/Notes", { replace: true });
+        setIsLogin(true);
+     console.log("islogin in loginn",isLogin)
       } else {
-        setLoginStatus("error");
-        alert("Login Failed");
+        notify("fail");
       }
-
-      console.log(response.status);
     } catch (error) {
-      setLoginStatus("error");
-      console.log(error);
+      if (error.response.data.data === "user is not verified") {
+        notify("User not verified");
+      } else {
+        notify("fail");
+      }
     }
   };
-  const [loginstatus, setLoginStatus] = useState(null);
-  let statusMessage=null;
 
-  if (loginstatus === "success") {
+// toast functionality--------------------
+  const notify = (value) => {
+    console.log(value);
+    if (value === "success") {
+      toast.success("Login successful!", { autoClose: 3000 });
+    } else if (value === "fail") {
+      toast.error("Invalid Credentials. Try again", { autoClose: 3000 });
+    } else if (value === "User not verified") {
+      toast.error("User is not verified", { autoClose: 2000 });
+    }
+  };
 
-    <Navigate to="/Notes" />
-    statusMessage = (
-      <div className="text-blue-500">
-        Login successful! 
-      </div>
-    );
-
-  } else if (loginstatus === "error") {
-    statusMessage = (
-      <div className="text-red-500">Login Failed. Please try again.</div>
-    );
-  }
 
   return (
     <>
+      
       <div className=" h-[93.3vh] items-center flex flex-col bg-cyan-200 justify-center ">
         <div className=" flex flex-col gap-16 bg-cyan-50 p-14 px-14 rounded-lg ">
           <h1 className="text-5xl text-center font-bold">Sign In</h1>
@@ -90,12 +104,11 @@ export const Login = () => {
                   placeholder="Enter your email"
                   id="useremail"
                   className="p-2 border-2 rounded "
-                
                   {...register("email")}
                 />
-                  {errors?.email && (
-                    <span className="text-red-500">{errors.email.message}</span>
-                  )}
+                {errors?.email && (
+                  <span className="text-red-500">{errors.email.message}</span>
+                )}
               </div>
               <div className=" flex  gap-2 flex-col w-[26vw]">
                 <label htmlFor="password" className="text-xl  font-bold ">
@@ -108,12 +121,12 @@ export const Login = () => {
                   id="userpassword"
                   className="p-2 border-2 rounded "
                   {...register("password")}
-                  />
-                  {errors?.password && (
-                    <span className="text-red-500">
-                      {errors.password.message}
-                    </span>
-                  )}
+                />
+                {errors?.password && (
+                  <span className="text-red-500">
+                    {errors.password.message}
+                  </span>
+                )}
               </div>
             </div>
             <button
@@ -122,10 +135,10 @@ export const Login = () => {
             >
               Login
             </button>
-            {statusMessage}
           </form>
         </div>
       </div>
+      
     </>
   );
 };

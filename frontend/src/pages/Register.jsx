@@ -1,9 +1,12 @@
 import react from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { z } from "zod";
+import { Slide, Zoom, Flip, Bounce } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import "react-toastify/dist/ReactToastify.css"; 
 
 const validateRegister = z.object({
   userName: z
@@ -22,6 +25,8 @@ const validateRegister = z.object({
 });
 
 export const Register = () => {
+  // const customId = "custom-id-yes";
+
   const {
     register,
     handleSubmit,
@@ -33,34 +38,31 @@ export const Register = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(`http://localhost:8000/register`, data);
-      if (response.data.status === 201) {
-        setRegistrationStatus("success");
-      } else {
-        setRegistrationStatus("error");
-        alert("User Already Exist");
-      }
 
-      console.log(response);
+      if (response.data.status === 201) {
+        localStorage.setItem("username", data.userName);
+        console.log(data)
+        notify("success");
+      } else {
+        notify("user exists");
+      }
     } catch (error) {
-      setRegistrationStatus("error");
       console.log(error);
+      notify("fail");
     }
   };
 
-  const [registrationStatus, setRegistrationStatus] = useState(null);
-  let statusMessage = null;
-
-  if (registrationStatus === "success") {
-    statusMessage = (
-      <div className="text-blue-500">
-        Registration successful! Please check your email to verify your account.
-      </div>
-    );
-  } else if (registrationStatus === "error") {
-    statusMessage = (
-      <div className="text-red-500">Failed to register. Please try again.</div>
-    );
-  }
+  const notify = (value) => {
+    if (value === "success") {
+      toast.success(
+        "Registration successful! Please check your email to verify your account.",{autoClose: 3000}
+      );
+    } else if (value === "fail") {
+      toast.error("Registration failed. Try again",{autoClose: 3000});
+    } else if (value === "user exists") {
+      toast.error("User already exists",{autoClose: 2000});
+    }
+  };
 
   return (
     <>
@@ -133,10 +135,12 @@ export const Register = () => {
             >
               Register
             </button>
-            {statusMessage}
+
           </form>
         </div>
       </div>
     </>
   );
 };
+
+
