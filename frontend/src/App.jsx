@@ -7,11 +7,13 @@ import { Login } from "./pages/Login";
 import { NotesPage } from "./pages/NotesPage";
 import { UserContext } from "./context/UserContext";
 import { useState } from "react";
+import { CreateNote } from "./components/CreateNote";
+import { NoteCard } from "./components/NoteCard";
 function App() {
-  const [isLogin,setIsLogin]=useState(false)
+  const [isLogin, setIsLogin] = useState(false);
   return (
     <>
-      <UserContext.Provider value={{isLogin,setIsLogin}}>
+      <UserContext.Provider value={{ isLogin, setIsLogin }}>
         <Navbar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -19,6 +21,8 @@ function App() {
           <Route path="/verify/:token" element={<VerifyPage />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Notes" element={<NotesPage />} />
+          <Route path="/createNote" element={<CreateNote />} />
+          <Route path="/NoteCard" element={NoteCard}></Route>
         </Routes>
       </UserContext.Provider>
     </>

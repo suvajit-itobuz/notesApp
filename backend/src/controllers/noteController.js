@@ -70,8 +70,8 @@ export const getNote = async (req, res) => {
 // updateNote
 export const updateNote = async (req, res) => {
   try {
-    const _id= req.params.id;
-    const {title, content } = req.body;
+    const _id = req.params.id;
+    const { title, content } = req.body;
     const updated_result = await noteSchema.findByIdAndUpdate(
       { _id },
       {
@@ -235,7 +235,7 @@ export const fileUpload = async (req, res) => {
     }
     const Note = await noteSchema.findById(id);
     if (Note) {
-      Note.file = "http://localhost:8000/"+req.file.path;
+      Note.file = "http://localhost:8000/" + req.file.path;
       await Note.save();
       return res.status(200).json({
         success: true,

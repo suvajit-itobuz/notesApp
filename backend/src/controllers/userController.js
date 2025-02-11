@@ -107,11 +107,13 @@ export const loginUser = async (req, res) => {
         if (!sessionModel) {
           throw new Error("session creation failed ");
         }
+        const userName = await user.findOne({ email });
         res.status(201).json({
+          username: userName.userName,
           token: accessToken,
           refreshToken: refreshToken,
           success: true,
-          message: "User loggedin successfully.",
+          message: "user loggedin successfully.",
         });
       } else {
         res.status(400).json({

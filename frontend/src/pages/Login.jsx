@@ -1,7 +1,7 @@
 import react from "react";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { useState ,useContext} from "react";
+import { useState, useContext } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -23,17 +23,9 @@ const ValidateLogin = z.object({
 });
 
 export const Login = () => {
-
   const navigate = useNavigate();
-  // const user = useContext(UserContext);
-  
-  const {isLogin,setIsLogin}=useContext(UserContext);
+  const { isLogin, setIsLogin } = useContext(UserContext);
 
-
-  // setIsLoggin(true);
-  // console.log(isLoggin);
-  
-  
   const {
     register,
     handleSubmit,
@@ -42,36 +34,37 @@ export const Login = () => {
     resolver: zodResolver(ValidateLogin),
   });
 
-// submit button -----------------
+  // submit button -----------------
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(`http://localhost:8000/login`, data);
-      console.log(response);
-      const { token, refreshToken } = await response.data;
-
+      const response = await axios.post(`http://localhost:8000/login`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const { token, refreshToken, username } = await response.data;
       localStorage.setItem("accessToken", token);
       localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("username", username);
+
+      axios.defaults.headers = {
+        Authorization: "Bearer " + token,
+      };
 
       if (response.status === 201) {
         notify("success");
         await navigate("/Notes", { replace: true });
         setIsLogin(true);
-     console.log("islogin in loginn",isLogin)
       } else {
         notify("fail");
       }
     } catch (error) {
-      if (error.response.data.data === "user is not verified") {
-        notify("User not verified");
-      } else {
-        notify("fail");
-      }
+      console.log("error in logging in ");
     }
   };
 
-// toast functionality--------------------
+  // toast functionality--------------------
   const notify = (value) => {
-    console.log(value);
     if (value === "success") {
       toast.success("Login successful!", { autoClose: 3000 });
     } else if (value === "fail") {
@@ -81,10 +74,8 @@ export const Login = () => {
     }
   };
 
-
   return (
     <>
-      
       <div className=" h-[93.3vh] items-center flex flex-col bg-cyan-200 justify-center ">
         <div className=" flex flex-col gap-16 bg-cyan-50 p-14 px-14 rounded-lg ">
           <h1 className="text-5xl text-center font-bold">Sign In</h1>
@@ -121,6 +112,7 @@ export const Login = () => {
                   id="userpassword"
                   className="p-2 border-2 rounded "
                   {...register("password")}
+                  autoComplete="on"
                 />
                 {errors?.password && (
                   <span className="text-red-500">
@@ -138,7 +130,6 @@ export const Login = () => {
           </form>
         </div>
       </div>
-      
     </>
   );
 };

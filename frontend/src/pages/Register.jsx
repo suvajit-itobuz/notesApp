@@ -1,12 +1,10 @@
 import react from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { z } from "zod";
-import { Slide, Zoom, Flip, Bounce } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
 
 const validateRegister = z.object({
   userName: z
@@ -25,8 +23,6 @@ const validateRegister = z.object({
 });
 
 export const Register = () => {
-  // const customId = "custom-id-yes";
-
   const {
     register,
     handleSubmit,
@@ -41,7 +37,6 @@ export const Register = () => {
 
       if (response.data.status === 201) {
         localStorage.setItem("username", data.userName);
-        console.log(data)
         notify("success");
       } else {
         notify("user exists");
@@ -55,12 +50,13 @@ export const Register = () => {
   const notify = (value) => {
     if (value === "success") {
       toast.success(
-        "Registration successful! Please check your email to verify your account.",{autoClose: 3000}
+        "Registration successful! Please check your email to verify your account.",
+        { autoClose: 3000 }
       );
     } else if (value === "fail") {
-      toast.error("Registration failed. Try again",{autoClose: 3000});
+      toast.error("Registration failed. Try again", { autoClose: 3000 });
     } else if (value === "user exists") {
-      toast.error("User already exists",{autoClose: 2000});
+      toast.error("User already exists", { autoClose: 2000 });
     }
   };
 
@@ -120,6 +116,7 @@ export const Register = () => {
                   placeholder="Enter your password"
                   id="userpassword"
                   className="p-2 border-2 rounded  "
+                  autoComplete="on"
                   {...register("password")}
                 />
                 {errors?.password && (
@@ -135,12 +132,9 @@ export const Register = () => {
             >
               Register
             </button>
-
           </form>
         </div>
       </div>
     </>
   );
 };
-
-
