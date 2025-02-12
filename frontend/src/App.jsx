@@ -7,8 +7,10 @@ import { Login } from "./pages/Login";
 import { NotesPage } from "./pages/NotesPage";
 import { UserContext } from "./context/UserContext";
 import { useState } from "react";
-import { CreateNote } from "./components/CreateNote";
+
 import { NoteCard } from "./components/NoteCard";
+import { ManipulateNote } from "./components/ManipulateNote";
+
 function App() {
   const [isLogin, setIsLogin] = useState(false);
   return (
@@ -21,7 +23,7 @@ function App() {
           <Route path="/verify/:token" element={<VerifyPage />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Notes" element={<NotesPage />} />
-          <Route path="/createNote" element={<CreateNote />} />
+          <Route path="/createNote" element={<ManipulateNote/>} />
           <Route path="/NoteCard" element={NoteCard}></Route>
         </Routes>
       </UserContext.Provider>

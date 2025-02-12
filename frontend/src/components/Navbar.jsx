@@ -7,7 +7,8 @@ import { UserContext } from "../context/UserContext";
 export const Navbar = () => {
   const { isLogin, setIsLogin } = useContext(UserContext);
   
-  const username = localStorage.getItem("username");
+  let username = localStorage.getItem("username").trim();
+  username=username.split(" ")[0];
   const access = localStorage.getItem("accessToken");
 
   useEffect(() => {

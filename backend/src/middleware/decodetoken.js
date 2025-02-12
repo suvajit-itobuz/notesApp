@@ -11,11 +11,9 @@ export const decodeToken = async (req, res, next) => {
     } else {
       accessToken = authHeader;
     }
-
     if (!accessToken) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-
     jwt.verify(
       accessToken,
       process.env.TOKEN_SECRET,
