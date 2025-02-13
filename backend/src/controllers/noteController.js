@@ -2,6 +2,7 @@ import noteSchema from "../models/noteSchema.js";
 import path from "path";
 import multer from "multer";
 
+
 //  creating note
 export const createNote = async (req, res) => {
   try {
@@ -139,12 +140,48 @@ export const deleteNote = async (req, res) => {
   }
 };
 
+// get all Note
+export const getAllNote = async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+    const sortCriteria = {
+      [req.query.sortField]: req.query.sortOrder === "asc" ? 1 : -1,
+    };
+
+    const offset = (page - 1) * limit;
+
+    const data = await noteSchema
+      .find({
+        userId: req.userId,
+        title: { $regex: req.body.title, $options: "i" },
+      })
+      .skip(offset)
+      .limit(limit)
+      .sort(sortCriteria)
+      .exec();
+
+    res.json({
+      status: 200,
+      data: data,
+      total: await noteSchema.find({ userId: req.userId }).countDocuments(), 
+    });
+  } catch (error) {
+
+    res.json({
+      status: 500,
+      message: "data fetching failed",
+      error: error.message,
+    });
+  }
+};
+
 // filter/search
 export const searchNote = async (req, res) => {
   try {
     const note = await noteSchema.find({
       userId: req.userId,
-      title: { $regex: req.body.value, $options: "i" },
+      title: { $regex: req.body.title, $options: "i" },
     });
 
     if (note.length !== 0) {

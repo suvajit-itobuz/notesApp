@@ -60,6 +60,7 @@ export const Login = () => {
       }
     } catch (error) {
       console.log("error in logging in ");
+      notify("fail")
     }
   };
 
@@ -97,8 +98,10 @@ export const Login = () => {
                   className="p-2 border-2 rounded "
                   {...register("email")}
                 />
-                {errors?.email && (
+                {errors.email ? (
                   <span className="text-red-500">{errors.email.message}</span>
+                ) : (
+                  <span className="text-red-500 invisible">""</span>
                 )}
               </div>
               <div className=" flex  gap-2 flex-col w-[26vw]">
@@ -114,9 +117,13 @@ export const Login = () => {
                   {...register("password")}
                   autoComplete="on"
                 />
-                {errors?.password && (
-                  <span className="text-red-500">
+                {errors.password ? (
+                  <span className="text-red-500 transition-all ease-in-out 3s">
                     {errors.password.message}
+                  </span>
+                ) : (
+                  <span className="text-red-500 invisible">
+                    ""
                   </span>
                 )}
               </div>

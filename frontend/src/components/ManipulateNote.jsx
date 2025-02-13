@@ -22,6 +22,7 @@ export const ManipulateNote = ({
   render,
   isOpen,
   onClose,
+
 }) => {
   let toggle;
   let errorMessage;
@@ -35,6 +36,7 @@ export const ManipulateNote = ({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(validateNote),
@@ -65,6 +67,7 @@ export const ManipulateNote = ({
   // handling submit button
   const onSubmit = async (data) => {
     try {
+      console.log(data)
       let method, Route;
       type.header === "Create"
         ? ((method = axios.post),
@@ -78,12 +81,10 @@ export const ManipulateNote = ({
           "Content-Type": "application/json",
         },
       });
-
-      console.log(response);
-
       if (response.data.status === 200) {
         notify("success");
         setrender(!render);
+        reset();
       }
     } catch (error) {
       if (error.response.status === 400) {
@@ -114,9 +115,8 @@ export const ManipulateNote = ({
     if (!access) {
       navigate("/login");
     }
-    //  title=type.NoteTitle;
     setTitle(type.NoteTitle);
-  }, [access, navigate, render, Modal]);
+  }, [access, navigate, render, Modal,type.NoteTitle]);
 
   // returning the modal
   return (
@@ -144,32 +144,36 @@ export const ManipulateNote = ({
                     {type.header} Post
                   </h1>
                   <div className=" flex  gap-5 flex-col">
-                    <textarea
+                    <input
                       className="placeholder:text-gray-500 placeholder:italic placeholder:text-5xl min-w-[40vw] min-h-[10vh] placeholder:font-semibold p-5 text-5xl"
                       type="text"
                       id=""
                       placeholder="New note title here..."
                       autoComplete="off"
                       aria-label="Post Title"
-                      autoFocus=""
+                      autoFocus="on"
+                      defaultValue={title}
                       {...register("title")}
-                      
-                      // defaultValue={title}
+        
                     />
-                    {errors?.title && (
-                        <span className="text-yellow-400 text-lg font-semibold">
-                          {errors.title.message}
-                        </span>
-                      )}
+                    {errors.title ? (
+                      <span className="text-yellow-400 text-lg font-semibold">
+                        {errors.title.message}
+                      </span>
+                    ) : (
+                      <p className="text-yellow-400 text-lg font-semibold invisible">
+                      " "
+                      </p>
+                    )}
                     <textarea
                       aria-label="Post Content"
                       type="text"
                       placeholder="Write your content here..."
                       id="content"
+                      defaultValue={type.NoteContent}
                       className="min-h-[35vh] p-5 placeholder:text-2xl text-2xl"
                       {...register("content")}
-                      // defaultValue={title}
-                    ></textarea>
+                    />
                   </div>
                 </div>
                 <button

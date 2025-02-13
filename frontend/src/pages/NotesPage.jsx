@@ -4,21 +4,23 @@ import { NoteCard } from "../components/NoteCard";
 import { ManipulateNote } from "../components/ManipulateNote";
 import { AddNote } from "../components/AddNote";
 import { SearchNote } from "../components/SearchNote";
+import { PaginateButton } from "../components/PaginateButton";
 
 export const NotesPage = () => {
   const navigate = useNavigate();
 
-  // const value =
-
   const access = localStorage.getItem("accessToken");
   const [render, setrender] = useState();
+  const [search, setSearch] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+
   const [type, setType] = useState({
     header: "Create",
     Route: "create",
     NoteTitle: "",
     NoteContent: "",
-    data_id:""
+    data_id: "",
   });
 
   useEffect(() => {
@@ -29,25 +31,45 @@ export const NotesPage = () => {
 
   return (
     <>
-      <div className="items-center justify-center flex w-screen flex-col">
-        <AddNote setModalOpen={setModalOpen} setType={setType} type={type} />
-        <SearchNote/>
-        <ManipulateNote
+      <div className="flex-col flex justify-center">
+        <div className="items-center justify-center flex w-screen flex-col relative">
+          <AddNote setModalOpen={setModalOpen} setType={setType} type={type} />
+
+          <SearchNote
+            setrender={setrender}
+            render={render}
+            search={search}
+            setSearch={setSearch}
+          />
+
+          <ManipulateNote
+            setrender={setrender}
+            render={render}
+            isOpen={isModalOpen}
+            onClose={() => setModalOpen(false)}
+            type={type}
+          />
+        </div>
+
+        <div className="flex flex-wrap  items-center justify-center relative">
+          <NoteCard
+            setrender={setrender}
+            render={render}
+            onClose={() => setModalOpen(false)}
+            setModalOpen={setModalOpen}
+            setType={setType}
+            search={search}
+            setSearch={setSearch}
+            page={page}
+            setPage={setPage}
+          />
+        </div>
+        <PaginateButton
+          page={page}
+          setPage={setPage}
           setrender={setrender}
           render={render}
-          isOpen={isModalOpen}
-          onClose={() => setModalOpen(false)}
-          type={type}
-        />
-      </div>
-      <div className="flex flex-wrap  ">
-        <NoteCard
-          setrender={setrender}
-          render={render}
-          onClose={() => setModalOpen(false)}
-          setModalOpen={setModalOpen}
-          setType={setType}
-        />
+        ></PaginateButton>
       </div>
     </>
   );

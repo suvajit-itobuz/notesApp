@@ -12,7 +12,7 @@ import { NoteCard } from "./components/NoteCard";
 import { ManipulateNote } from "./components/ManipulateNote";
 
 function App() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState();
   return (
     <>
       <UserContext.Provider value={{ isLogin, setIsLogin }}>
