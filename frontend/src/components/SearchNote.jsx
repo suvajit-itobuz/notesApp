@@ -1,22 +1,20 @@
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import axios from "axios";
 import { useEffect } from "react";
 import { SortNote } from "./SortNote";
 import { useNavigate } from "react-router-dom";
 
-export const SearchNote = ({ setrender, render, setSearch }) => {
+export const SearchNote = ({ setrender, render, setSearch, setSortType,setSortOrder,sortOrder }) => {
   // fetching access token
 
   const access = localStorage.getItem("accessToken");
 
   // use form hook
-  const { register, handleSubmit,  formState } = useForm({});
+  const { register, handleSubmit, formState } = useForm({});
 
   // submit button -----------------
-  const onSubmit =  (data) => {
+  const onSubmit = (data) => {
     setSearch(data.title);
-    setrender(!render)
+    setrender(!render);
   };
 
   // monitoring changes
@@ -31,10 +29,16 @@ export const SearchNote = ({ setrender, render, setSearch }) => {
     <>
       <form
         action="#"
-        className="flex flex-col items-center gap-10"
+        className="flex  items-center gap-5"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <SortNote></SortNote>
+        <SortNote
+          setSortType={setSortType}
+          setrender={setrender}
+          render={render}
+          setSortOrder={setSortOrder}
+          sortOrder={sortOrder}
+        ></SortNote>
         <div className="flex  items-center gap-10 relative w-full cursor-pointer">
           <div className=" flex  ">
             <input
@@ -66,7 +70,6 @@ export const SearchNote = ({ setrender, render, setSearch }) => {
                 d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
               />
             </svg>
-            {/* <span class="sr-only">Search</span> */}
           </button>
         </div>
       </form>

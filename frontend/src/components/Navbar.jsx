@@ -1,15 +1,24 @@
 import React, { useEffect, useContext } from "react";
-import { Link } from "react-router-dom"; // corrected import for react-router-dom
+import { Link } from "react-router-dom";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { LuCircleUserRound } from "react-icons/lu";
+
 import { UserContext } from "../context/UserContext";
 
 export const Navbar = () => {
   const { isLogin, setIsLogin } = useContext(UserContext);
-  
-  let username = localStorage.getItem("username").trim();
-  username=username.split(" ")[0];
-  const access = localStorage.getItem("accessToken");
+  let username;
+  username = localStorage.getItem("username");
+  if (!username) {
+    username = "";
+  } else {
+    username = username.split(" ")[0].trim();
+  }
+
+  let access = localStorage.getItem("accessToken");
+  if (!access) {
+    access = "";
+  }
 
   useEffect(() => {
     if (access === "") {
@@ -17,32 +26,32 @@ export const Navbar = () => {
     } else {
       setIsLogin(true);
     }
-  }, [access, setIsLogin]); 
+  }, [access, setIsLogin]);
 
   const logout = () => {
     setIsLogin(false);
-    localStorage.setItem("accessToken", "");
-    localStorage.setItem("username", "");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("username");
+    localStorage.removeItem("refreshToken");
   };
 
   return (
-    <nav className="navbar flex justify-between p-6 px-20 bg-cyan-100">
+    <nav className="navbar flex justify-between p-6 px-20 bg-cyan-100 h-[10vh]">
       <div className="nav-heading-container flex items-center gap-2 hover:cursor-pointer">
         <Link to="Notes" className="flex gap-2">
-       
-        <div className="nav-icon">
-          <HiOutlinePencilSquare size={30} />
-        </div>
-        <div className="nav-heading font-bold text-2xl">
-          <h2>Notes app</h2>
-        </div>
+          <div className="nav-icon">
+            <HiOutlinePencilSquare size={30} />
+          </div>
+          <div className="nav-heading font-bold text-2xl">
+            <h2>Notes app</h2>
+          </div>
         </Link>
       </div>
       {isLogin ? (
         <div className="nav-items flex">
           <ul className="flex gap-5 text-lg items-center">
             <li className="font-semibold text-3xl">Welcome, {username}</li>
-            <LuCircleUserRound size={40}  className="cursor-pointer"/>
+            <LuCircleUserRound size={40} className="cursor-pointer" />
             <li onClick={logout}>
               <Link
                 to="Login"
@@ -51,7 +60,6 @@ export const Navbar = () => {
                 Logout
               </Link>
             </li>
-          
           </ul>
         </div>
       ) : (
@@ -75,7 +83,6 @@ export const Navbar = () => {
             </li>
           </ul>
         </div>
-      
       )}
     </nav>
   );

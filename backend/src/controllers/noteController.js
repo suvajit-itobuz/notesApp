@@ -2,7 +2,6 @@ import noteSchema from "../models/noteSchema.js";
 import path from "path";
 import multer from "multer";
 
-
 //  creating note
 export const createNote = async (req, res) => {
   try {
@@ -164,10 +163,9 @@ export const getAllNote = async (req, res) => {
     res.json({
       status: 200,
       data: data,
-      total: await noteSchema.find({ userId: req.userId }).countDocuments(), 
+      total: await noteSchema.find({ userId: req.userId }).countDocuments(),
     });
   } catch (error) {
-
     res.json({
       status: 500,
       message: "data fetching failed",

@@ -6,8 +6,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
+
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
 const ValidateLogin = z.object({
   email: z.string().email({ message: "Invalid email format" }),
@@ -23,13 +26,25 @@ const ValidateLogin = z.object({
 });
 
 export const Login = () => {
+  const [password, setPassword] = useState("password");
   const navigate = useNavigate();
   const { isLogin, setIsLogin } = useContext(UserContext);
 
+  // changing the password input type for the eye functionality
+  const changePasswordType = (e) => {
+    if (password === "password") {
+      setPassword("text");
+    } else {
+      setPassword("password");
+    }
+  };
+
+  // use form hook
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(ValidateLogin),
   });
@@ -50,17 +65,20 @@ export const Login = () => {
       axios.defaults.headers = {
         Authorization: "Bearer " + token,
       };
-
       if (response.status === 201) {
         notify("success");
         await navigate("/Notes", { replace: true });
         setIsLogin(true);
+        reset();
       } else {
         notify("fail");
       }
     } catch (error) {
-      console.log("error in logging in ");
-      notify("fail")
+      if (error.response.data.data === "user is not verified") {
+        notify("User not verified");
+      } else {
+        notify("fail");
+      }
     }
   };
 
@@ -108,23 +126,40 @@ export const Login = () => {
                 <label htmlFor="password" className="text-xl  font-bold ">
                   Password:
                 </label>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  id="userpassword"
-                  className="p-2 border-2 rounded "
-                  {...register("password")}
-                  autoComplete="on"
-                />
+                <div className="password-image w-full relative ">
+                  <input
+                    type={password}
+                    name="password"
+                    placeholder="Enter your password"
+                    id="userpassword"
+                    className="p-2 border-2 rounded  w-full"
+                    autoComplete="on"
+                    {...register("password")}
+                  />
+                  {password === "password" ? (
+                    <span className="absolute top-0 right-0 h-full pe-5 pt-3 cursor-pointer">
+                      <FaEye
+                        className="cursor-pointer"
+                        onClick={changePasswordType}
+                        size={20}
+                      />
+                    </span>
+                  ) : (
+                    <span className="absolute top-0 right-0 h-full pe-5 pt-3 cursor-pointer">
+                      <FaEyeSlash
+                        size={20}
+                        className="cursor-pointer"
+                        onClick={changePasswordType}
+                      />
+                    </span>
+                  )}
+                </div>
                 {errors.password ? (
                   <span className="text-red-500 transition-all ease-in-out 3s">
                     {errors.password.message}
                   </span>
                 ) : (
-                  <span className="text-red-500 invisible">
-                    ""
-                  </span>
+                  <span className="text-red-500 invisible">""</span>
                 )}
               </div>
             </div>

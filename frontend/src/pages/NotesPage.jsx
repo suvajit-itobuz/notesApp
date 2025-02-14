@@ -6,6 +6,7 @@ import { AddNote } from "../components/AddNote";
 import { SearchNote } from "../components/SearchNote";
 import { PaginateButton } from "../components/PaginateButton";
 
+
 export const NotesPage = () => {
   const navigate = useNavigate();
 
@@ -14,6 +15,9 @@ export const NotesPage = () => {
   const [search, setSearch] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [page, setPage] = useState(1);
+  const [total,setTotal]=useState(0);
+  const [sortType,setSortType]=useState("title");
+  const [sortOrder,setSortOrder]=useState("asc");
 
   const [type, setType] = useState({
     header: "Create",
@@ -40,6 +44,9 @@ export const NotesPage = () => {
             render={render}
             search={search}
             setSearch={setSearch}
+            setSortType={setSortType}
+            setSortOrder={setSortOrder}
+            sortOrder={sortOrder}
           />
 
           <ManipulateNote
@@ -48,6 +55,7 @@ export const NotesPage = () => {
             isOpen={isModalOpen}
             onClose={() => setModalOpen(false)}
             type={type}
+            
           />
         </div>
 
@@ -62,6 +70,10 @@ export const NotesPage = () => {
             setSearch={setSearch}
             page={page}
             setPage={setPage}
+            setTotal={setTotal}
+            sortType={sortType}
+            sortOrder={sortOrder}
+            
           />
         </div>
         <PaginateButton
@@ -69,6 +81,7 @@ export const NotesPage = () => {
           setPage={setPage}
           setrender={setrender}
           render={render}
+          total={total}
         ></PaginateButton>
       </div>
     </>

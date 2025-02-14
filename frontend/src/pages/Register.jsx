@@ -1,10 +1,12 @@
-import react from "react";
+import react, { useState } from "react";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
 const validateRegister = z.object({
   userName: z
@@ -23,10 +25,13 @@ const validateRegister = z.object({
 });
 
 export const Register = () => {
+  const [password, setPassword] = useState("password");
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(validateRegister),
   });
@@ -38,6 +43,7 @@ export const Register = () => {
       if (response.data.status === 201) {
         localStorage.setItem("username", data.userName);
         notify("success");
+        reset();
       } else {
         notify("user exists");
       }
@@ -57,6 +63,14 @@ export const Register = () => {
       toast.error("Registration failed. Try again", { autoClose: 3000 });
     } else if (value === "user exists") {
       toast.error("User already exists", { autoClose: 2000 });
+    }
+  };
+
+  const changePasswordType = () => {
+    if (password === "password") {
+      setPassword("text");
+    } else {
+      setPassword("password");
     }
   };
 
@@ -89,9 +103,7 @@ export const Register = () => {
                     {errors.userName.message}
                   </span>
                 ) : (
-                  <span className="text-red-500 invisible">
-                   ""
-                  </span>
+                  <span className="text-red-500 invisible">""</span>
                 )}
               </div>
               <div className="registration-input flex  gap-2 flex-col w-[26vw]">
@@ -116,15 +128,35 @@ export const Register = () => {
                 <label htmlFor="password" className="text-xl  font-bold ">
                   Password:
                 </label>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  id="userpassword"
-                  className="p-2 border-2 rounded  "
-                  autoComplete="on"
-                  {...register("password")}
-                />
+                <div className="password-image w-full relative ">
+                  <input
+                    type={password}
+                    name="password"
+                    placeholder="Enter your password"
+                    id="userpassword"
+                    className="p-2 border-2 rounded  w-full"
+                    autoComplete="on"
+                    {...register("password")}
+                  />
+                  {password === "password" ? (
+                    <span className="absolute top-0 right-0 h-full pe-5 pt-3 cursor-pointer">
+                      <FaEye
+                        className="cursor-pointer"
+                        onClick={changePasswordType}
+                        size={20}
+                      />
+                    </span>
+                  ) : (
+                    <span className="absolute top-0 right-0 h-full pe-5 pt-3 cursor-pointer">
+                      <FaEyeSlash
+                        size={20}
+                        className="cursor-pointer"
+                        onClick={changePasswordType}
+                      />
+                    </span>
+                  )}
+                </div>
+
                 {errors.password ? (
                   <span className="text-red-500 transition-all ease-in-out 3s">
                     {errors.password.message}

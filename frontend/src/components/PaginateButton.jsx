@@ -3,15 +3,22 @@ import { BsFillArrowRightCircleFill } from "react-icons/bs";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const PaginateButton = ({ page, setPage, setrender, render }) => {
+export const PaginateButton = ({ page, setPage, setrender, render, total }) => {
   const navigate = useNavigate();
   const nextPage = () => {
-    setPage(page + 1);
-    setrender(!render);
+    const pageValue = Math.floor(total / 6);
+    if (total != 6) {
+      if (page < pageValue + 1) {
+        setPage(page + 1);
+        setrender(!render);
+      }
+    }
   };
   const prevPage = () => {
-    setPage(page - 1);
-    setrender(!render);
+    if (page > 1) {
+      setPage(page - 1);
+      setrender(!render);
+    }
   };
   const access = localStorage.getItem("accessToken");
   // monitoring changes
@@ -19,7 +26,7 @@ export const PaginateButton = ({ page, setPage, setrender, render }) => {
     if (!access) {
       navigate("/login");
     }
-  }, [access, render]);
+  }, [access, render, navigate]);
   return (
     <>
       <div className="button-container flex items-center gap-3 justify-center absolute start-[44%] bottom-0">

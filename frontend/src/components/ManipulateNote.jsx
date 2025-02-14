@@ -22,8 +22,8 @@ export const ManipulateNote = ({
   render,
   isOpen,
   onClose,
-
 }) => {
+
   let toggle;
   let errorMessage;
   let [title, setTitle] = useState(type.NoteTitle);
@@ -67,7 +67,6 @@ export const ManipulateNote = ({
   // handling submit button
   const onSubmit = async (data) => {
     try {
-      console.log(data)
       let method, Route;
       type.header === "Create"
         ? ((method = axios.post),
@@ -116,7 +115,7 @@ export const ManipulateNote = ({
       navigate("/login");
     }
     setTitle(type.NoteTitle);
-  }, [access, navigate, render, Modal,type.NoteTitle]);
+  }, [access, navigate, render,  type.NoteTitle]);
 
   // returning the modal
   return (
@@ -152,9 +151,7 @@ export const ManipulateNote = ({
                       autoComplete="off"
                       aria-label="Post Title"
                       autoFocus="on"
-                      defaultValue={title}
                       {...register("title")}
-        
                     />
                     {errors.title ? (
                       <span className="text-yellow-400 text-lg font-semibold">
@@ -162,7 +159,7 @@ export const ManipulateNote = ({
                       </span>
                     ) : (
                       <p className="text-yellow-400 text-lg font-semibold invisible">
-                      " "
+                        " "
                       </p>
                     )}
                     <textarea
@@ -170,7 +167,6 @@ export const ManipulateNote = ({
                       type="text"
                       placeholder="Write your content here..."
                       id="content"
-                      defaultValue={type.NoteContent}
                       className="min-h-[35vh] p-5 placeholder:text-2xl text-2xl"
                       {...register("content")}
                     />
