@@ -72,17 +72,21 @@ export const updateNote = async (req, res) => {
   try {
     const _id = req.params.id;
     const { title, content } = req.body;
+
     const existing = await noteSchema.findOne({
       title: req.body.title,
       userId: req.userId,
     });
 
     if (existing) {
-      return res.status(400).json({
-        success: false,
-        message: "This title Already Exists",
-      });
+      if (existing._id.toString() !== _id) {
+        return res.status(400).json({
+          success: false,
+          message: "This title Already Exists",
+        });
+      }
     }
+
     const updated_result = await noteSchema.findByIdAndUpdate(
       { _id },
       {

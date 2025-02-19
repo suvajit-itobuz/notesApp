@@ -23,7 +23,6 @@ export const ManipulateNote = ({
   isOpen,
   onClose,
 }) => {
-
   let toggle;
   let errorMessage;
   let [title, setTitle] = useState(type.NoteTitle);
@@ -115,7 +114,7 @@ export const ManipulateNote = ({
       navigate("/login");
     }
     setTitle(type.NoteTitle);
-  }, [access, navigate, render,  type.NoteTitle]);
+  }, [access, navigate, render, type.NoteTitle]);
 
   // returning the modal
   return (
@@ -176,7 +175,7 @@ export const ManipulateNote = ({
                   type="submit"
                   className="text-xl border-black border-2 p-2 px-5 bg-blue-100  rounded transition ease-in-out delay-150  hover:scale-105 hover:bg-slate-800 duration-500 hover:text-white"
                 >
-                  {type.header}
+                  Save
                 </button>
               </form>
             </div>
